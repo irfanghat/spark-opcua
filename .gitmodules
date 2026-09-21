@@ -1,0 +1,4 @@
+[submodule "eclipse/milo/opc-ua-demo-server"]
+	path = eclipse/milo/opc-ua-demo-server
+	url = https://github.com/digitalpetri/opc-ua-demo-server
+	branch = main
