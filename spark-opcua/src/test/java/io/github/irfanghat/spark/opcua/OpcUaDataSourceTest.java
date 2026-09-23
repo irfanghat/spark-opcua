@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ServiceLoader;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
@@ -13,7 +14,7 @@ import org.junit.jupiter.api.Test;
 
 class OpcUaDataSourceTest {
     @Test
-    void shouldLoadOpcUaDataSource() {
+    void shouldLoadOpcUaDataSource() throws InterruptedException {
 
         SparkSession spark = SparkSession.builder()
                 .master("local[2]")
@@ -31,7 +32,9 @@ class OpcUaDataSourceTest {
             assertNotNull(df);
 
             df.printSchema();
-            df.show(false);
+            df.show(true);
+
+            TimeUnit.SECONDS.sleep(60);
 
         } finally {
             spark.stop();

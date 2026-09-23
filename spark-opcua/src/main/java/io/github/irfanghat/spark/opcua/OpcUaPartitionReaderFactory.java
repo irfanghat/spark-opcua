@@ -4,16 +4,13 @@ import org.apache.spark.sql.catalyst.InternalRow;
 import org.apache.spark.sql.connector.read.InputPartition;
 import org.apache.spark.sql.connector.read.PartitionReader;
 import org.apache.spark.sql.connector.read.PartitionReaderFactory;
-import org.apache.spark.sql.util.CaseInsensitiveStringMap;
 
 public class OpcUaPartitionReaderFactory
         implements PartitionReaderFactory {
 
-    private final CaseInsensitiveStringMap options;
+    private final OpcUaOptions options;
 
-    public OpcUaPartitionReaderFactory(
-            CaseInsensitiveStringMap options) {
-
+    public OpcUaPartitionReaderFactory(OpcUaOptions options) {
         this.options = options;
     }
 

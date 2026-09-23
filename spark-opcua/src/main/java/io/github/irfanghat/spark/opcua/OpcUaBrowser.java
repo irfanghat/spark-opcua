@@ -21,7 +21,6 @@ import org.eclipse.milo.opcua.stack.core.types.structured.BrowseResult;
 import org.eclipse.milo.opcua.stack.core.types.structured.ReferenceDescription;
 
 public class OpcUaBrowser {
-
     public static final int DEFAULT_MAX_NODES = 10;
 
     public List<NodeId> browse(
@@ -86,10 +85,9 @@ public class OpcUaBrowser {
         try {
             BrowseResult result = client.browse(browse);
 
-            ReferenceDescription[] references =
-                    requireNonNullElse(
-                            result.getReferences(),
-                            new ReferenceDescription[0]);
+            ReferenceDescription[] references = requireNonNullElse(
+                    result.getReferences(),
+                    new ReferenceDescription[0]);
 
             for (ReferenceDescription rd : references) {
 
@@ -105,8 +103,7 @@ public class OpcUaBrowser {
                                 return;
                             }
 
-                            NodeClass nodeClass =
-                                    rd.getNodeClass();
+                            NodeClass nodeClass = rd.getNodeClass();
 
                             if (nodeClass == NodeClass.Variable) {
 
