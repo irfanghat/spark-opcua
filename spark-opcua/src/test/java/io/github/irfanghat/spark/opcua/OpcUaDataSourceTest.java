@@ -34,7 +34,7 @@ class OpcUaDataSourceTest {
             df.printSchema();
             df.show(true);
 
-            TimeUnit.SECONDS.sleep(60);
+            TimeUnit.SECONDS.sleep(1);
 
         } finally {
             spark.stop();

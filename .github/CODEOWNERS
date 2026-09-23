@@ -1,0 +1,9 @@
+* @irfanghat
+
+/spark-opcua/ @irfanghat
+/hooks/ @irfanghat
+
+/docs/ @irfanghat
+*.md @irfanghat
+
+.github/ @irfanghat
