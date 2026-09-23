@@ -56,7 +56,7 @@ jobs:
           cache: maven
 
       - name: Build and test connector
-        run: mvn -B clean verify
+        run: cd spark-opcua && mvn -B clean verify
 
       - name: Stop OPC UA server
         if: always()
