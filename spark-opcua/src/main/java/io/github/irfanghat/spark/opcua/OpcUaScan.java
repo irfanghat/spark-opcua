@@ -7,10 +7,10 @@ import org.apache.spark.sql.util.CaseInsensitiveStringMap;
 
 public class OpcUaScan implements Scan {
 
-    private final CaseInsensitiveStringMap options;
+    private final OpcUaOptions options;
 
     public OpcUaScan(CaseInsensitiveStringMap options) {
-        this.options = options;
+        this.options = OpcUaOptions.from(options);
     }
 
     @Override

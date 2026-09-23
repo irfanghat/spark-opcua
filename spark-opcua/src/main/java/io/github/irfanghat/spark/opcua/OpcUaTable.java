@@ -1,7 +1,6 @@
 package io.github.irfanghat.spark.opcua;
 
 import org.apache.spark.sql.connector.catalog.SupportsRead;
-import org.apache.spark.sql.connector.catalog.Table;
 import org.apache.spark.sql.connector.catalog.TableCapability;
 import org.apache.spark.sql.connector.read.ScanBuilder;
 import org.apache.spark.sql.types.StructType;
@@ -11,7 +10,7 @@ import java.util.Set;
 
 import static org.apache.spark.sql.connector.catalog.TableCapability.BATCH_READ;
 
-public class OpcUaTable implements Table, SupportsRead {
+public class OpcUaTable implements SupportsRead {
 
     private final StructType schema;
 

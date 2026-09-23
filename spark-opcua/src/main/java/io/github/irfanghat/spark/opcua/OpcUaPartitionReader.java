@@ -2,18 +2,16 @@ package io.github.irfanghat.spark.opcua;
 
 import static org.apache.spark.sql.catalyst.util.DateTimeUtils.millisToMicros;
 
-import java.time.Instant;
 import java.util.Iterator;
-import java.util.List;
 
 import org.apache.spark.sql.catalyst.InternalRow;
 import org.apache.spark.sql.catalyst.expressions.GenericInternalRow;
-import org.apache.spark.sql.catalyst.util.DateTimeUtils;
 import org.apache.spark.sql.connector.read.PartitionReader;
-import org.apache.spark.sql.util.CaseInsensitiveStringMap;
+import org.apache.spark.unsafe.types.UTF8String;
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
+import org.eclipse.milo.opcua.stack.core.types.enumerated.TimestampsToReturn;
 
 public class OpcUaPartitionReader
         implements PartitionReader<InternalRow> {
@@ -24,18 +22,16 @@ public class OpcUaPartitionReader
     private InternalRow current;
 
     public OpcUaPartitionReader(
-            CaseInsensitiveStringMap options,
+            OpcUaOptions options,
             OpcUaInputPartition partition) {
 
-        String endpoint = options.get("endpoint");
-
-        if (endpoint == null) {
+        if (options.endpoint() == null || options.endpoint().isBlank()) {
             throw new IllegalArgumentException(
                     "Missing required option: endpoint");
         }
 
         try {
-            this.client = OpcUaClient.create(endpoint);
+            this.client = OpcUaClient.create(options.endpoint());
             this.client.connect();
 
             this.nodeIds = partition.nodeIds().iterator();
@@ -59,17 +55,32 @@ public class OpcUaPartitionReader
         try {
             NodeId nodeId = NodeId.parse(nodeIdString);
 
-            DataValue value = client.readValue(0, null, nodeId);
+            DataValue dataValue = client.readValue(
+                    0,
+                    TimestampsToReturn.Both,
+                    nodeId);
 
-            String valueString = value.getValue().getValue().toString();
+            Object rawValue = dataValue.getValue().getValue();
 
-            long timestamp = millisToMicros(
-                    value.getServerTime().getJavaDate().getTime());
+            String valueString = rawValue != null
+                    ? rawValue.toString()
+                    : null;
+
+            Long timestamp = null;
+
+            if (dataValue.getServerTime() != null) {
+                timestamp = millisToMicros(
+                        dataValue.getServerTime()
+                                .getJavaDate()
+                                .getTime());
+            }
 
             current = new GenericInternalRow(new Object[] {
-                    nodeIdString,
-                    nodeIdString,
-                    valueString,
+                    UTF8String.fromString(nodeIdString),
+                    UTF8String.fromString(nodeIdString),
+                    valueString != null
+                            ? UTF8String.fromString(valueString)
+                            : null,
                     timestamp
             });
 
@@ -91,8 +102,7 @@ public class OpcUaPartitionReader
     public void close() {
         try {
             client.disconnect();
-        } catch (Exception e) {
-            // Nothing else to do during cleanup.
+        } catch (Exception ignored) {
         }
     }
 }
